@@ -47,4 +47,33 @@ class ComparatorTest extends TestCase
         $this->assertSame('2.2.4.0', $comparator->getHighestVersion());
         $this->assertSame('0.3.2.2', $comparator->getLowestVersion());
     }
+
+
+    public function testComparatorProducer(): Comparator
+    {
+        $comparator = new Comparator();
+        $this->assertSame('', $comparator->getHighestVersion());
+
+        return $comparator;
+    }
+
+    public static function caseProvider(): array
+    {
+        return [
+            ['1.0.1.1', '1.0.1.1', true],
+            ['2.0.1.1', '2.3.4.2', false],
+            ['1.0.1.1', '2.0.1.1', true],
+            ['6.1', '6.1', true]
+        ];
+    }
+
+    /**
+     * @depends testComparatorProducer
+     * @dataProvider caseProvider
+    */
+    public function testComparatorMassComparisonWithUpdateSet($addingVersion, $highestVersion, $expected, $comparator)
+    {
+        $comparator->pushVersion($addingVersion);
+        $this->assertEquals($expected, $comparator->getHighestVersion() === $highestVersion);
+    }
 }

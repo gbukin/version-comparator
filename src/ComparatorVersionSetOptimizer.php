@@ -4,7 +4,7 @@ namespace App;
 
 class ComparatorVersionSetOptimizer implements ComparatorVersionSetOptimizerInterface
 {
-    private int $optimizedLength;
+    private int $optimizedLength = 0;
 
     public function __construct(private array $versionSet)
     {
@@ -32,6 +32,10 @@ class ComparatorVersionSetOptimizer implements ComparatorVersionSetOptimizerInte
 
     public function optimize(): array
     {
+        if (count($this->versionSet) === 1) {
+            $this->optimizedLength = $this->getVersionPartAmount($this->versionSet[0]);
+        }
+
         if ($this->isOptimizeNeed()) {
             foreach ($this->versionSet as $key => $version) {
                 if ($this->getVersionPartAmount($version) > $this->optimizedLength) {

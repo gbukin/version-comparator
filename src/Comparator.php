@@ -15,7 +15,7 @@ class Comparator
      * @var ComparatorString[]
      */
     private array $versionStash = [];
-    private array $versionWeightStash;
+    private array $versionWeightStash = [];
 
     private bool $compared;
 
@@ -27,6 +27,7 @@ class Comparator
     public function getHighestVersion(bool $original = true): string
     {
         if (!$this->compared) $this->processVersionsSet();
+        if (!count($this->versionWeightStash)) return '';
 
         $highestWeight = max($this->versionWeightStash);
         $highestWeightKey = array_search($highestWeight, $this->versionWeightStash);
@@ -40,6 +41,7 @@ class Comparator
     public function getLowestVersion(bool $original = true): string
     {
         if (!$this->compared) $this->processVersionsSet();
+        if (!count($this->versionWeightStash)) return '';
 
         $lowestWeight = min($this->versionWeightStash);
         $lowestWeightKey = array_search($lowestWeight, $this->versionWeightStash);
@@ -137,6 +139,9 @@ class Comparator
 
     private function pushComparatorString(): void
     {
+        $this->versionStash = [];
+        $this->versionWeightStash = [];
+
         foreach ($this->optimizedVersionStash as $version) {
             $comparatorVersion = new ComparatorString($version);
 
