@@ -65,8 +65,6 @@ class Comparator
     {
         [$version_1, $version_2] = self::prepareVersion($version_a, $version_b);
 
-        var_dump($version_1->getWeight(), $version_2->getWeight());
-
         return $version_1->getWeight() > $version_2->getWeight();
     }
 
@@ -87,7 +85,6 @@ class Comparator
     private static function prepareVersion(string $version_a, string $version_b): array
     {
         [$version_1, $version_2] = (new ComparatorVersionSetOptimizer([$version_a, $version_b]))->optimize();
-        var_dump('Optimized: ' . json_encode([$version_1, $version_2]));
         self::adaptVersion($version_1, $version_2);
 
         return [$version_1, $version_2];

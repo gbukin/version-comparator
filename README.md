@@ -8,9 +8,11 @@
 Сравнение двух версий
 
 ```php
-\App\Comparator::gt('2.0.1', '1.0.1') // true
-\App\Comparator::eq('1.67.0.9', '1.67.0.8') // false
-\App\Comparator::lt('10.1.1', '10.1.2') // true
+\App\Comparator::gt('2.0.1', '1.0.1'); // true
+\App\Comparator::eq('1.67.0.9', '1.67.0.8'); // false
+\App\Comparator::lt('10.1.1', '10.1.2'); // true
+
+\App\Comparator::compare('33.1.0.10', 'gt', '32.0.0.1.10'); // true
 ```
 
 Сравнение среди множества версий
