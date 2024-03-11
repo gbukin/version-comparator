@@ -12,10 +12,6 @@ class ComparatorTest extends TestCase
     {
         $highVersion = '2.1.1';
         $lowVersion = '2.0.1';
-        $s1 = (new ComparatorString($highVersion));
-        $s2 = (new ComparatorString($lowVersion));
-
-        print_r('W1: ' . $s1->getWeight() . '; W2: ' . $s2->getWeight() . PHP_EOL);
 
         $this->assertTrue(Comparator::gt($highVersion, $lowVersion));
         $this->assertFalse(Comparator::gt($lowVersion, $highVersion));
