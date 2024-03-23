@@ -4,10 +4,6 @@ namespace App;
 
 interface ComparatorStringInterface
 {
-    public function update(string $newString): void;
-
-    public function getLength(): int;
-
     public function getALength(): int;
 
     public function toString(): string;

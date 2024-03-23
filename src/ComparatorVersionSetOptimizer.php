@@ -6,6 +6,9 @@ class ComparatorVersionSetOptimizer implements ComparatorVersionSetOptimizerInte
 {
     private int $optimizedLength = 0;
 
+    /**
+     * @param string[] $versionSet
+     */
     public function __construct(private array $versionSet)
     {
     }
@@ -30,6 +33,9 @@ class ComparatorVersionSetOptimizer implements ComparatorVersionSetOptimizerInte
         return true;
     }
 
+    /**
+     * @return string[]
+     */
     public function optimize(): array
     {
         if (count($this->versionSet) === 1) {

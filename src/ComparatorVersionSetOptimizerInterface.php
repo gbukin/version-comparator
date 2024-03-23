@@ -8,5 +8,5 @@ interface ComparatorVersionSetOptimizerInterface
 
     public function optimize(): array;
 
-    public function getOptimizedLength();
+    public function getOptimizedLength(): int;
 }

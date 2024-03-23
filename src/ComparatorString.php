@@ -9,19 +9,9 @@ class ComparatorString implements ComparatorStringInterface
     private float $weight = -1;
     private string $dirtyString = '';
 
-    public function __construct(private string $string)
+    public function __construct(private readonly string $string)
     {
         $this->dirtyString = $this->string;
-    }
-
-    public function update(string $newString): void
-    {
-        $this->string = $newString;
-    }
-
-    public function getLength(): int
-    {
-        return strlen($this->string);
     }
 
     public function getALength(bool $original = false): int
@@ -34,6 +24,10 @@ class ComparatorString implements ComparatorStringInterface
         return $original ? $this->string : $this->dirtyString;
     }
 
+    /**
+     * @param bool $original
+     * @return string[]
+     */
     public function toArray(bool $original = false): array
     {
         return explode(self::SEPARATOR, $original ? $this->string : $this->dirtyString);
@@ -53,16 +47,17 @@ class ComparatorString implements ComparatorStringInterface
         $resultWeight = 1;
         $reversedVersionParts = array_reverse($this->toArray());
 
+        /** @var int $iteration */
         foreach ($reversedVersionParts as $iteration => $step) {
             if (strlen($step) > 1) {
-                $m_step = $step / 10;
+                $m_step = (int) $step / 10;
             } else {
-                $m_step = $step;
+                $m_step = (int) $step;
             }
 
             if ((int)$m_step === 0) {
                 if (array_key_exists($iteration - 1, $reversedVersionParts))
-                    $resultWeight -= pow($reversedVersionParts[$iteration - 1], $iteration + 1);
+                    $resultWeight -= pow((int) $reversedVersionParts[$iteration - 1], $iteration + 1);
             } else {
                 $resultWeight += pow($m_step, $iteration + 1);
             }
@@ -75,7 +70,15 @@ class ComparatorString implements ComparatorStringInterface
 
     public function fillToLength(int $length, mixed $value = '0'): void
     {
-        $filledArray = array_merge($this->toArray(original: true), array_fill(0, $length - $this->getALength(original: true), $value));
+        /** @var string[] $filledArray */
+        $filledArray = array_merge(
+            $this->toArray(original: true),
+            array_fill(
+                0,
+                $length - $this->getALength(original: true),
+                $value
+            )
+        );
 
         $this->dirtyString = implode(self::SEPARATOR, $filledArray);
     }
