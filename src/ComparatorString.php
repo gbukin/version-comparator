@@ -60,13 +60,11 @@ class ComparatorString implements ComparatorStringInterface
                     $resultWeight += (tanh((int)$step / 100) * 1000) / $modifier;
                 }
             } else {
-                $resultWeight -= $iteration + 1;
+                $resultWeight -= $iteration;
             }
 
             $modifier /= 10;
         }
-
-        $resultWeight += $this->zeroAmount();
 
         return $resultWeight;
     }

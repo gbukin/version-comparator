@@ -28,10 +28,18 @@ class ComparatorTest extends TestCase
         $version_2 = '2.2.2.1';
         $this->assertFalse(Comparator::gt($version_1, $version_2));
 
+        $version_1 = '2.2.2.0.0.2.0.1';
+        $version_2 = '2.2.2.1.0.1.3.1';
+        $this->assertTrue(Comparator::lt($version_1, $version_2));
+
+        $version_1 = '5.4.3.2.1.0.1.2';
+        $version_2 = '5.4.3.2.1.0.0.1';
+        $this->assertTrue(Comparator::gt($version_1, $version_2));
+
         $comparator = new Comparator();
         $comparator->pushVersion([$version_1, $version_2]);
 
-        $this->assertSame($version_2, $comparator->getHighestVersion());
+        $this->assertSame($version_1, $comparator->getHighestVersion());
     }
 
     public function testComparatorMassComparison(): void
