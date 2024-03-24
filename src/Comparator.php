@@ -21,7 +21,6 @@ class Comparator
      * @var ComparatorString[]
      */
     private array $versionStash = [];
-    private array $versionWeightStash = [];
 
     private bool $compared;
 
@@ -39,15 +38,12 @@ class Comparator
     public function getHighestVersion(bool $original = true): string
     {
         if (!$this->compared) $this->processVersionsSet();
-        if (!count($this->versionWeightStash)) return '';
+        if (!count($this->versionStash)) return '';
 
-        $highestWeight = (int) max($this->versionWeightStash);
-        $highestWeightKey = array_search($highestWeight, $this->versionWeightStash);
+        $keys = array_keys($this->versionStash);
+        $maxKey = max($keys);
 
-        if ($original)
-            return $this->rawVersionStash[$highestWeightKey];
-        else
-            return $this->versionStash[$highestWeightKey]->toString($original);
+        return $this->versionStash[$maxKey]->toString($original);
     }
 
     /**
@@ -56,15 +52,12 @@ class Comparator
     public function getLowestVersion(bool $original = true): string
     {
         if (!$this->compared) $this->processVersionsSet();
-        if (!count($this->versionWeightStash)) return '';
+        if (!count($this->versionStash)) return '';
 
-        $lowestWeight = (int) min($this->versionWeightStash);
-        $lowestWeightKey = array_search($lowestWeight, $this->versionWeightStash);
+        $keys = array_keys($this->versionStash);
+        $minKey = min($keys);
 
-        if ($original)
-            return $this->rawVersionStash[$lowestWeightKey];
-        else
-            return $this->versionStash[$lowestWeightKey]->toString($original);
+        return $this->versionStash[$minKey]->toString($original);
     }
 
     /**
@@ -85,9 +78,9 @@ class Comparator
     /**
     * @psalm-suppress UnusedMethod
     */
-    public static function gt(string $version_a, string $version_b): bool
+    public static function gt(string $versionOne, string $versionTwo): bool
     {
-        [$version_1, $version_2] = self::prepareVersion($version_a, $version_b);
+        [$version_1, $version_2] = self::prepareVersion($versionOne, $versionTwo);
 
         return $version_1->getWeight() > $version_2->getWeight();
     }
@@ -95,9 +88,9 @@ class Comparator
     /**
      * @psalm-suppress UnusedMethod
      */
-    public static function eq(string $version_a, string $version_b): bool
+    public static function eq(string $versionOne, string $versionTwo): bool
     {
-        [$version_1, $version_2] = self::prepareVersion($version_a, $version_b);
+        [$version_1, $version_2] = self::prepareVersion($versionOne, $versionTwo);
 
         return $version_1->getWeight() === $version_2->getWeight();
     }
@@ -105,9 +98,9 @@ class Comparator
     /**
      * @psalm-suppress UnusedMethod
      */
-    public static function lt(string $version_a, string $version_b): bool
+    public static function lt(string $versionOne, string $versionTwo): bool
     {
-        [$version_1, $version_2] = self::prepareVersion($version_a, $version_b);
+        [$version_1, $version_2] = self::prepareVersion($versionOne, $versionTwo);
 
         return $version_1->getWeight() < $version_2->getWeight();
     }
@@ -121,6 +114,7 @@ class Comparator
     {
         [$version_1, $version_2] = (new ComparatorVersionSetOptimizer([$version_a, $version_b]))
             ->optimize();
+
         return self::adaptVersion($version_1, $version_2);
     }
 
@@ -185,15 +179,13 @@ class Comparator
     private function pushComparatorString(): void
     {
         $this->versionStash = [];
-        $this->versionWeightStash = [];
 
         foreach ($this->optimizedVersionStash as $version) {
             $comparatorVersion = new ComparatorString($version);
 
             $comparatorVersion->fillToLength($this->optimizedLength);
 
-            $this->versionStash[] = $comparatorVersion;
-            $this->versionWeightStash[] = $comparatorVersion->getWeight();
+            $this->versionStash[(string)$comparatorVersion->getWeight()] = $comparatorVersion;
         }
     }
 }

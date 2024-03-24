@@ -47,20 +47,23 @@ class ComparatorString implements ComparatorStringInterface
         $resultWeight = 1;
         $reversedVersionParts = array_reverse($this->toArray());
 
+        $modifier = 10 * count($this->toArray());
+
         /** @var int $iteration */
         foreach ($reversedVersionParts as $iteration => $step) {
-            if (strlen($step) > 1) {
-                $m_step = (int) $step / 10;
+            if ($step > 0) {
+                if (strlen($step) === 1) {
+                    $resultWeight += pow((int)$step, M_E) / $modifier;
+                } elseif (strlen($step) === 2) {
+                    $resultWeight += tanh((int)$step / 100);
+                } else {
+                    $resultWeight += (tanh((int)$step / 100) * 1000) / $modifier;
+                }
             } else {
-                $m_step = (int) $step;
+                $resultWeight -= $iteration + 1;
             }
 
-            if ((int)$m_step === 0) {
-                if (array_key_exists($iteration - 1, $reversedVersionParts))
-                    $resultWeight -= pow((int) $reversedVersionParts[$iteration - 1], $iteration + 1);
-            } else {
-                $resultWeight += pow($m_step, $iteration + 1);
-            }
+            $modifier /= 10;
         }
 
         $resultWeight += $this->zeroAmount();
